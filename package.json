@@ -62,6 +62,10 @@
     "@supabase/ssr": "^0.0.10",
     "@supabase/supabase-js": "^2.38.4",
     "@tabler/icons-react": "^2.40.0",
+    "@trigger.dev/nextjs": "^2.3.18",
+    "@trigger.dev/react": "^2.3.18",
+    "@trigger.dev/sdk": "^2.3.18",
+    "@trigger.dev/supabase": "^2.3.18",
     "@vercel/analytics": "^1.1.1",
     "@vercel/edge-config": "^0.4.1",
     "@xenova/transformers": "^2.13.4",
@@ -78,8 +82,8 @@
     "lucide-react": "^0.292.0",
     "mammoth": "^1.6.0",
     "next": "^14.1.0",
-    "next-pwa": "5.6.0",
     "next-i18n-router": "^5.2.0",
+    "next-pwa": "5.6.0",
     "next-themes": "^0.2.1",
     "openai": "^4.23.0",
     "pdf-parse": "^1.1.1",
@@ -125,5 +129,8 @@
     "tailwindcss-animate": "^1.0.7",
     "ts-node": "^10.9.2",
     "typescript": "^5"
+  },
+  "trigger.dev": {
+    "endpointId": "spark-pilot-A4dN"
   }
 }
