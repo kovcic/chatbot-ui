@@ -5,8 +5,11 @@ import { Label } from "@/components/ui/label"
 import { PRESET_NAME_MAX } from "@/db/limits"
 import { LLM_LIST } from "@/lib/models/llm/llm-list"
 import { Tables } from "@/supabase/types"
-import { FC, useState } from "react"
+import { FC, useContext, useState } from "react"
 import { SidebarItem } from "../all/sidebar-display-item"
+import { PresetCollection } from "@/types"
+import { PresetCollectionSelect } from "./preset-collection-select"
+import { ChatbotUIContext } from "@/context/context"
 
 interface PresetItemProps {
   preset: Tables<"presets">
@@ -22,8 +25,14 @@ export const PresetItem: FC<PresetItemProps> = ({ preset }) => {
     temperature: preset.temperature,
     contextLength: preset.context_length,
     includeProfileContext: preset.include_profile_context,
-    includeWorkspaceInstructions: preset.include_workspace_instructions
+    includeWorkspaceInstructions: preset.include_workspace_instructions,
+    collectionId: preset.collection_id || undefined
   })
+
+  const { collections } = useContext(ChatbotUIContext)
+  const collection = collections.find(
+    collection => collection.id === presetChatSettings.collectionId
+  )
 
   const modelDetails = LLM_LIST.find(model => model.modelId === preset.model)
 
@@ -48,7 +57,8 @@ export const PresetItem: FC<PresetItemProps> = ({ preset }) => {
         context_length: presetChatSettings.contextLength,
         model: presetChatSettings.model,
         prompt: presetChatSettings.prompt,
-        temperature: presetChatSettings.temperature
+        temperature: presetChatSettings.temperature,
+        collection_id: presetChatSettings.collectionId
       }}
       renderInputs={() => (
         <>
@@ -67,7 +77,24 @@ export const PresetItem: FC<PresetItemProps> = ({ preset }) => {
             chatSettings={presetChatSettings as any}
             onChangeChatSettings={setPresetChatSettings}
             useAdvancedDropdown={true}
-          />
+          >
+            {preset.collection_id && (
+              <div className="space-y-1">
+                <Label>Collection</Label>
+                <PresetCollectionSelect
+                  selectedPresetCollection={collection}
+                  onPresetCollectionSelect={(
+                    collection: PresetCollection | undefined
+                  ) => {
+                    setPresetChatSettings({
+                      ...presetChatSettings,
+                      collectionId: collection?.id
+                    })
+                  }}
+                />
+              </div>
+            )}
+          </ChatSettingsForm>
         </>
       )}
     />

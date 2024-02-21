@@ -117,19 +117,21 @@ export const createFile = async (
     file_path: filePath
   })
 
-  const formData = new FormData()
-  formData.append("file", file)
-  formData.append("file_id", createdFile.id)
-  formData.append("embeddingsProvider", embeddingsProvider)
+  if (!createdFile.document_agent) {
+    const formData = new FormData()
+    formData.append("file", file)
+    formData.append("file_id", createdFile.id)
+    formData.append("embeddingsProvider", embeddingsProvider)
 
-  const response = await fetch("/api/retrieval/process", {
-    method: "POST",
-    body: formData
-  })
+    const response = await fetch("/api/retrieval/process", {
+      method: "POST",
+      body: formData
+    })
 
-  if (!response.ok) {
-    toast.error("Failed to process file.")
-    await deleteFile(createdFile.id)
+    if (!response.ok) {
+      toast.error("Failed to process file.")
+      await deleteFile(createdFile.id)
+    }
   }
 
   const fetchedFile = await getFileById(createdFile.id)
@@ -171,22 +173,24 @@ export const createDocXFile = async (
     file_path: filePath
   })
 
-  const response = await fetch("/api/retrieval/process/docx", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      text: text,
-      fileId: createdFile.id,
-      embeddingsProvider,
-      fileExtension: "docx"
+  if (!createdFile.document_agent) {
+    const response = await fetch("/api/retrieval/process/docx", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        text: text,
+        fileId: createdFile.id,
+        embeddingsProvider,
+        fileExtension: "docx"
+      })
     })
-  })
 
-  if (!response.ok) {
-    toast.error("Failed to process file.")
-    await deleteFile(createdFile.id)
+    if (!response.ok) {
+      toast.error("Failed to process file.")
+      await deleteFile(createdFile.id)
+    }
   }
 
   const fetchedFile = await getFileById(createdFile.id)

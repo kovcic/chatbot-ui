@@ -37,12 +37,14 @@ export const FilePicker: FC<FilePickerProps> = ({
 
   const filteredFiles = files.filter(
     file =>
+      !file.document_agent &&
       file.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
       !selectedFileIds.includes(file.id)
   )
 
   const filteredCollections = collections.filter(
     collection =>
+      !collection.top_agent &&
       collection.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
       !selectedCollectionIds.includes(collection.id)
   )

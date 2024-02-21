@@ -1,0 +1,2 @@
+ALTER TABLE presets
+DROP COLUMN agent;

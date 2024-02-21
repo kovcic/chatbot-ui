@@ -522,6 +522,7 @@ export interface Database {
           id: string
           name: string
           sharing: string
+          top_agent: boolean
           updated_at: string | null
           user_id: string
         }
@@ -532,6 +533,7 @@ export interface Database {
           id?: string
           name: string
           sharing?: string
+          top_agent?: boolean
           updated_at?: string | null
           user_id: string
         }
@@ -542,6 +544,7 @@ export interface Database {
           id?: string
           name?: string
           sharing?: string
+          top_agent?: boolean
           updated_at?: string | null
           user_id?: string
         }
@@ -666,9 +669,11 @@ export interface Database {
         Row: {
           created_at: string
           description: string
+          document_agent: boolean
           file_path: string
           folder_id: string | null
           id: string
+          metadata: Json
           name: string
           sharing: string
           size: number
@@ -680,9 +685,11 @@ export interface Database {
         Insert: {
           created_at?: string
           description: string
+          document_agent?: boolean
           file_path: string
           folder_id?: string | null
           id?: string
+          metadata?: Json
           name: string
           sharing?: string
           size: number
@@ -694,9 +701,11 @@ export interface Database {
         Update: {
           created_at?: string
           description?: string
+          document_agent?: boolean
           file_path?: string
           folder_id?: string | null
           id?: string
+          metadata?: Json
           name?: string
           sharing?: string
           size?: number
@@ -1021,6 +1030,7 @@ export interface Database {
       }
       presets: {
         Row: {
+          collection_id: string | null
           context_length: number
           created_at: string
           description: string
@@ -1038,6 +1048,7 @@ export interface Database {
           user_id: string
         }
         Insert: {
+          collection_id?: string | null
           context_length: number
           created_at?: string
           description: string
@@ -1055,6 +1066,7 @@ export interface Database {
           user_id: string
         }
         Update: {
+          collection_id?: string | null
           context_length?: number
           created_at?: string
           description?: string
@@ -1084,6 +1096,13 @@ export interface Database {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "presets_workspace_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "collections"
             referencedColumns: ["id"]
           }
         ]

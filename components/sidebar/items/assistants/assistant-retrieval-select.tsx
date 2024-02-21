@@ -110,10 +110,12 @@ export const AssistantRetrievalSelect: FC<AssistantRetrievalSelectProps> = ({
         {files
           .filter(
             file =>
+              !file.document_agent &&
               !selectedAssistantRetrievalItems.some(
                 selectedAssistantRetrieval =>
                   selectedAssistantRetrieval.id === file.id
-              ) && file.name.toLowerCase().includes(search.toLowerCase())
+              ) &&
+              file.name.toLowerCase().includes(search.toLowerCase())
           )
           .map(file => (
             <AssistantRetrievalItemOption
@@ -131,10 +133,12 @@ export const AssistantRetrievalSelect: FC<AssistantRetrievalSelectProps> = ({
         {collections
           .filter(
             collection =>
+              !collection.top_agent &&
               !selectedAssistantRetrievalItems.some(
                 selectedAssistantRetrieval =>
                   selectedAssistantRetrieval.id === collection.id
-              ) && collection.name.toLowerCase().includes(search.toLowerCase())
+              ) &&
+              collection.name.toLowerCase().includes(search.toLowerCase())
           )
           .map(collection => (
             <AssistantRetrievalItemOption

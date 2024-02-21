@@ -7,22 +7,24 @@ import {
 import { FileIcon } from "@/components/ui/file-icon"
 import { Input } from "@/components/ui/input"
 import { ChatbotUIContext } from "@/context/context"
-import { CollectionFile } from "@/types"
-import { IconChevronDown, IconCircleCheckFilled } from "@tabler/icons-react"
+import { PresetCollection } from "@/types"
+import {
+  IconBooks,
+  IconChevronDown,
+  IconCircleCheckFilled
+} from "@tabler/icons-react"
 import { FC, useContext, useEffect, useRef, useState } from "react"
 
-interface CollectionFileSelectProps {
-  selectedCollectionFiles: CollectionFile[]
-  onCollectionFileSelect: (file: CollectionFile) => void
-  showOnlyAgentFiles?: boolean
+interface PresetCollectionSelectProps {
+  selectedPresetCollection: PresetCollection | undefined
+  onPresetCollectionSelect: (collection: PresetCollection | undefined) => void
 }
 
-export const CollectionFileSelect: FC<CollectionFileSelectProps> = ({
-  selectedCollectionFiles,
-  onCollectionFileSelect,
-  showOnlyAgentFiles
+export const PresetCollectionSelect: FC<PresetCollectionSelectProps> = ({
+  selectedPresetCollection,
+  onPresetCollectionSelect
 }) => {
-  const { files } = useContext(ChatbotUIContext)
+  const { collections } = useContext(ChatbotUIContext)
 
   const inputRef = useRef<HTMLInputElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
@@ -38,11 +40,15 @@ export const CollectionFileSelect: FC<CollectionFileSelectProps> = ({
     }
   }, [isOpen])
 
-  const handleFileSelect = (file: CollectionFile) => {
-    onCollectionFileSelect(file)
+  const handleCollectionSelect = (collection: PresetCollection) => {
+    if (collection.id === selectedPresetCollection?.id) {
+      onPresetCollectionSelect(undefined)
+    } else {
+      onPresetCollectionSelect(collection)
+    }
   }
 
-  if (!files) return null
+  if (!collections) return null
 
   return (
     <DropdownMenu
@@ -63,7 +69,9 @@ export const CollectionFileSelect: FC<CollectionFileSelectProps> = ({
         >
           <div className="flex items-center">
             <div className="ml-2 flex items-center">
-              {selectedCollectionFiles.length} files selected
+              {selectedPresetCollection
+                ? selectedPresetCollection.name
+                : "Select collection"}
             </div>
           </div>
 
@@ -78,44 +86,24 @@ export const CollectionFileSelect: FC<CollectionFileSelectProps> = ({
       >
         <Input
           ref={inputRef}
-          placeholder="Search files..."
+          placeholder="Search collection..."
           value={search}
           onChange={e => setSearch(e.target.value)}
           onKeyDown={e => e.stopPropagation()}
         />
 
-        {selectedCollectionFiles
-          .filter(file =>
-            file.name.toLowerCase().includes(search.toLowerCase())
-          )
-          .map(file => (
-            <CollectionFileItem
-              key={file.id}
-              file={file}
-              selected={selectedCollectionFiles.some(
-                selectedCollectionFile => selectedCollectionFile.id === file.id
-              )}
-              onSelect={handleFileSelect}
-            />
-          ))}
-
-        {files
+        {collections
           .filter(
-            file =>
-              (!showOnlyAgentFiles || file.document_agent) &&
-              !selectedCollectionFiles.some(
-                selectedCollectionFile => selectedCollectionFile.id === file.id
-              ) &&
-              file.name.toLowerCase().includes(search.toLowerCase())
+            collection =>
+              collection.top_agent &&
+              collection.name.toLowerCase().includes(search.toLowerCase())
           )
-          .map(file => (
-            <CollectionFileItem
-              key={file.id}
-              file={file}
-              selected={selectedCollectionFiles.some(
-                selectedCollectionFile => selectedCollectionFile.id === file.id
-              )}
-              onSelect={handleFileSelect}
+          .map(collection => (
+            <PresetCollectionItem
+              key={collection.id}
+              collection={collection}
+              selected={selectedPresetCollection?.id === collection.id}
+              onSelect={handleCollectionSelect}
             />
           ))}
       </DropdownMenuContent>
@@ -124,18 +112,18 @@ export const CollectionFileSelect: FC<CollectionFileSelectProps> = ({
 }
 
 interface CollectionFileItemProps {
-  file: CollectionFile
+  collection: PresetCollection
   selected: boolean
-  onSelect: (file: CollectionFile) => void
+  onSelect: (collection: PresetCollection) => void
 }
 
-const CollectionFileItem: FC<CollectionFileItemProps> = ({
-  file,
+const PresetCollectionItem: FC<CollectionFileItemProps> = ({
+  collection,
   selected,
   onSelect
 }) => {
   const handleSelect = () => {
-    onSelect(file)
+    onSelect(collection)
   }
 
   return (
@@ -145,10 +133,10 @@ const CollectionFileItem: FC<CollectionFileItemProps> = ({
     >
       <div className="flex grow items-center truncate">
         <div className="mr-2 min-w-[24px]">
-          <FileIcon type={file.type} size={24} />
+          <IconBooks size={24} />
         </div>
 
-        <div className="truncate">{file.name}</div>
+        <div className="truncate">{collection.name}</div>
       </div>
 
       {selected && (

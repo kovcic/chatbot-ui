@@ -56,6 +56,7 @@ export const Message: FC<MessageProps> = ({
     availableOpenRouterModels,
     chatMessages,
     selectedAssistant,
+    selectedPreset,
     chatImages,
     assistantImages,
     toolInUse,
@@ -228,7 +229,9 @@ export const Message: FC<MessageProps> = ({
                 {message.role === "assistant"
                   ? selectedAssistant
                     ? selectedAssistant?.name
-                    : MODEL_DATA?.modelName
+                    : selectedPreset?.collection_id
+                      ? selectedPreset.name
+                      : MODEL_DATA?.modelName
                   : profile?.display_name ?? profile?.username}
               </div>
             </div>

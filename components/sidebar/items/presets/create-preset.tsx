@@ -2,10 +2,13 @@ import { SidebarCreateItem } from "@/components/sidebar/items/all/sidebar-create
 import { ChatSettingsForm } from "@/components/ui/chat-settings-form"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Checkbox } from "@/components/ui/checkbox"
 import { ChatbotUIContext } from "@/context/context"
 import { PRESET_NAME_MAX } from "@/db/limits"
 import { TablesInsert } from "@/supabase/types"
 import { FC, useContext, useState } from "react"
+import { PresetCollectionSelect } from "./preset-collection-select"
+import { PresetCollection } from "@/types"
 
 interface CreatePresetProps {
   isOpen: boolean
@@ -29,8 +32,14 @@ export const CreatePreset: FC<CreatePresetProps> = ({
     includeProfileContext: selectedWorkspace?.include_profile_context,
     includeWorkspaceInstructions:
       selectedWorkspace?.include_workspace_instructions,
-    embeddingsProvider: selectedWorkspace?.embeddings_provider
+    embeddingsProvider: selectedWorkspace?.embeddings_provider,
+    collectionId: undefined as string | undefined
   })
+  const [agent, setAgent] = useState(false)
+  const { collections } = useContext(ChatbotUIContext)
+  const collection = collections.find(
+    collection => collection.id === presetChatSettings.collectionId
+  )
 
   if (!profile) return null
   if (!selectedWorkspace) return null
@@ -53,7 +62,8 @@ export const CreatePreset: FC<CreatePresetProps> = ({
           model: presetChatSettings.model,
           prompt: presetChatSettings.prompt,
           temperature: presetChatSettings.temperature,
-          embeddings_provider: presetChatSettings.embeddingsProvider
+          embeddings_provider: presetChatSettings.embeddingsProvider,
+          collection_id: presetChatSettings.collectionId
         } as TablesInsert<"presets">
       }
       renderInputs={() => (
@@ -69,11 +79,37 @@ export const CreatePreset: FC<CreatePresetProps> = ({
             />
           </div>
 
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              checked={agent}
+              onCheckedChange={(value: boolean) => setAgent(value)}
+            />
+
+            <Label>Use as Top agent?</Label>
+          </div>
+
           <ChatSettingsForm
             chatSettings={presetChatSettings as any}
             onChangeChatSettings={setPresetChatSettings}
             useAdvancedDropdown={true}
-          />
+          >
+            {agent && (
+              <div className="space-y-1">
+                <Label>Collection</Label>
+                <PresetCollectionSelect
+                  selectedPresetCollection={collection}
+                  onPresetCollectionSelect={(
+                    collection: PresetCollection | undefined
+                  ) => {
+                    setPresetChatSettings({
+                      ...presetChatSettings,
+                      collectionId: collection?.id
+                    })
+                  }}
+                />
+              </div>
+            )}
+          </ChatSettingsForm>
         </>
       )}
     />

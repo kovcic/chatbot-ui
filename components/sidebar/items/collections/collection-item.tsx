@@ -85,6 +85,7 @@ export const CollectionItem: FC<CollectionItemProps> = ({ collection }) => {
                 onCollectionFileSelect={file =>
                   handleFileSelect(file, renderState.setSelectedCollectionFiles)
                 }
+                showOnlyAgentFiles={collection.top_agent}
               />
             </div>
 

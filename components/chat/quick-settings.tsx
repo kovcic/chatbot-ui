@@ -61,6 +61,7 @@ export const QuickSettings: FC<QuickSettingsProps> = ({}) => {
     item: Tables<"presets"> | Tables<"assistants">,
     contentType: "presets" | "assistants"
   ) => {
+    let collectionId = undefined
     if (contentType === "assistants") {
       setSelectedAssistant(item as Tables<"assistants">)
 
@@ -101,6 +102,7 @@ export const QuickSettings: FC<QuickSettingsProps> = ({}) => {
     } else if (contentType === "presets") {
       setSelectedPreset(item as Tables<"presets">)
       setSelectedAssistant(null)
+      collectionId = (item as Tables<"presets">).collection_id || undefined
     }
 
     setChatSettings({
@@ -110,7 +112,8 @@ export const QuickSettings: FC<QuickSettingsProps> = ({}) => {
       contextLength: item.context_length,
       includeProfileContext: item.include_profile_context,
       includeWorkspaceInstructions: item.include_workspace_instructions,
-      embeddingsProvider: item.embeddings_provider as "openai" | "local"
+      embeddingsProvider: item.embeddings_provider as "openai" | "local",
+      collectionId
     })
   }
 

@@ -3,7 +3,7 @@ import { getCollectionFilesByCollectionId } from "@/db/collection-files"
 import { Tables } from "@/supabase/types"
 import { useContext } from "react"
 
-export const usePromptAndCommand = () => {
+export const usePromptAndCommand = (disableCommands: boolean = false) => {
   const {
     chatFiles,
     setNewMessageFiles,
@@ -28,22 +28,24 @@ export const usePromptAndCommand = () => {
     const atMatch = value.match(atTextRegex)
     const toolMatch = value.match(toolTextRegex)
 
-    if (slashMatch) {
-      setIsPromptPickerOpen(true)
-      setSlashCommand(slashMatch[1])
-    } else if (atMatch) {
-      setIsAtPickerOpen(true)
-      setAtCommand(atMatch[1])
-    } else if (toolMatch) {
-      setIsToolPickerOpen(true)
-      setToolCommand(toolMatch[1])
-    } else {
-      setIsPromptPickerOpen(false)
-      setIsAtPickerOpen(false)
-      setSlashCommand("")
-      setAtCommand("")
-      setIsToolPickerOpen(false)
-      setToolCommand("")
+    if (!disableCommands) {
+      if (slashMatch) {
+        setIsPromptPickerOpen(true)
+        setSlashCommand(slashMatch[1])
+      } else if (atMatch) {
+        setIsAtPickerOpen(true)
+        setAtCommand(atMatch[1])
+      } else if (toolMatch) {
+        setIsToolPickerOpen(true)
+        setToolCommand(toolMatch[1])
+      } else {
+        setIsPromptPickerOpen(false)
+        setIsAtPickerOpen(false)
+        setSlashCommand("")
+        setAtCommand("")
+        setIsToolPickerOpen(false)
+        setToolCommand("")
+      }
     }
 
     setUserInput(value)

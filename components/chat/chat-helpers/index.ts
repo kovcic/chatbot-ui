@@ -215,13 +215,23 @@ export const handleHostedChat = async (
     formattedMessages = await buildFinalMessages(payload, profile, chatImages)
   }
 
-  const apiEndpoint =
+  let apiEndpoint =
     provider === "custom" ? "/api/chat/custom" : `/api/chat/${provider}`
 
-  const requestBody = {
+  let requestBody = {
     chatSettings: payload.chatSettings,
     messages: formattedMessages,
-    customModelId: provider === "custom" ? modelData.hostedId : ""
+    customModelId: provider === "custom" ? modelData.hostedId : "",
+    collectionId: undefined as string | undefined
+  }
+
+  if (payload.chatSettings.collectionId) {
+    apiEndpoint = "/api/chat/rag"
+
+    requestBody = {
+      ...requestBody,
+      collectionId: payload.chatSettings.collectionId
+    }
   }
 
   const response = await fetchChatResponse(

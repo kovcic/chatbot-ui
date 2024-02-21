@@ -57,7 +57,9 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
     handleFocusChatInput
   } = useChatHandler()
 
-  const { handleInputChange } = usePromptAndCommand()
+  const { handleInputChange } = usePromptAndCommand(
+    !!selectedPreset?.collection_id
+  )
 
   const { filesToAccept, handleSelectDeviceFile } = useSelectFileHandler()
 
@@ -159,7 +161,11 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
           <IconCirclePlus
             className="absolute bottom-[12px] left-3 cursor-pointer p-1 hover:opacity-50"
             size={32}
-            onClick={() => fileInputRef.current?.click()}
+            onClick={
+              selectedPreset?.collection_id
+                ? undefined
+                : () => fileInputRef.current?.click()
+            }
           />
 
           {/* Hidden input to select files from device */}
@@ -178,9 +184,13 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
         <TextareaAutosize
           textareaRef={chatInputRef}
           className="ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring text-md flex w-full resize-none rounded-md border-none bg-transparent px-14 py-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-          placeholder={t(
-            `Ask anything. Type "/" for prompts, "#" for files, and "!" for tools.`
-          )}
+          placeholder={
+            selectedPreset?.collection_id
+              ? `Ask anything.`
+              : t(
+                  `Ask anything. Type "/" for prompts, "#" for files, and "!" for tools.`
+                )
+          }
           onValueChange={handleInputChange}
           value={userInput}
           minRows={1}

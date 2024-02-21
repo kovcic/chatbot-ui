@@ -6,6 +6,7 @@ import { COLLECTION_NAME_MAX } from "@/db/limits"
 import { TablesInsert } from "@/supabase/types"
 import { CollectionFile } from "@/types"
 import { FC, useContext, useState } from "react"
+import { Checkbox } from "@/components/ui/checkbox"
 import { CollectionFileSelect } from "./collection-file-select"
 
 interface CreateCollectionProps {
@@ -25,6 +26,7 @@ export const CreateCollection: FC<CreateCollectionProps> = ({
   const [selectedCollectionFiles, setSelectedCollectionFiles] = useState<
     CollectionFile[]
   >([])
+  const [topAgent, setTopAgent] = useState(false)
 
   const handleFileSelect = (file: CollectionFile) => {
     setSelectedCollectionFiles(prevState => {
@@ -55,7 +57,8 @@ export const CreateCollection: FC<CreateCollectionProps> = ({
           })),
           user_id: profile.user_id,
           name,
-          description
+          description,
+          top_agent: topAgent
         } as TablesInsert<"collections">
       }
       isOpen={isOpen}
@@ -69,6 +72,7 @@ export const CreateCollection: FC<CreateCollectionProps> = ({
             <CollectionFileSelect
               selectedCollectionFiles={selectedCollectionFiles}
               onCollectionFileSelect={handleFileSelect}
+              showOnlyAgentFiles={topAgent}
             />
           </div>
 
@@ -81,6 +85,14 @@ export const CreateCollection: FC<CreateCollectionProps> = ({
               onChange={e => setName(e.target.value)}
               maxLength={COLLECTION_NAME_MAX}
             />
+          </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              checked={topAgent}
+              onCheckedChange={(value: boolean) => setTopAgent(value)}
+            />
+
+            <Label>Use as a top agent</Label>
           </div>
         </>
       )}

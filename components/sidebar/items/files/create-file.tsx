@@ -2,6 +2,7 @@ import { ACCEPTED_FILE_TYPES } from "@/components/chat/chat-hooks/use-select-fil
 import { SidebarCreateItem } from "@/components/sidebar/items/all/sidebar-create-item"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Checkbox } from "@/components/ui/checkbox"
 import { ChatbotUIContext } from "@/context/context"
 import { FILE_NAME_MAX } from "@/db/limits"
 import { TablesInsert } from "@/supabase/types"
@@ -19,6 +20,7 @@ export const CreateFile: FC<CreateFileProps> = ({ isOpen, onOpenChange }) => {
   const [isTyping, setIsTyping] = useState(false)
   const [description, setDescription] = useState("")
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [documentAgent, setDocumentAgent] = useState(false)
 
   const handleSelectedFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return
@@ -47,7 +49,8 @@ export const CreateFile: FC<CreateFileProps> = ({ isOpen, onOpenChange }) => {
           file_path: "",
           size: selectedFile?.size || 0,
           tokens: 0,
-          type: selectedFile?.type || 0
+          type: selectedFile?.type || 0,
+          document_agent: documentAgent
         } as TablesInsert<"files">
       }
       isOpen={isOpen}
@@ -74,6 +77,15 @@ export const CreateFile: FC<CreateFileProps> = ({ isOpen, onOpenChange }) => {
               onChange={e => setName(e.target.value)}
               maxLength={FILE_NAME_MAX}
             />
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              checked={documentAgent}
+              onCheckedChange={(value: boolean) => setDocumentAgent(value)}
+            />
+
+            <Label>Use as a document agent</Label>
           </div>
         </>
       )}

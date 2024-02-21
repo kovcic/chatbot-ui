@@ -1,0 +1,49 @@
+{
+  "$schema":"http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "description":"Metadata for a document",
+  "type":"object",
+  "properties":{
+     "title":{
+        "description":"Document title.",
+        "type":"string"
+     },
+     "date":{
+        "description": "Date of a document in ISO 8601 format, e.g. 2018-11-13T20:20:39+00:00.",
+        "type": "string"
+     },
+     "summary":{
+        "description":"Summary of a document.",
+        "type":"string"
+     },
+     "key_takeways":{
+        "description":"Key takeways from a document.",
+        "type":"string"
+     },
+     "topics_covered":{
+        "description":"List of the high-level topics covered in a document, e.g. Chemistry, Physics, Biology, etc.",
+        "type":"array",
+        "items":{
+           "type":"string"
+        },
+        "uniqueItems":true
+     },
+     "entities_covered":{
+        "description":"List of the entities that appear in a document. An entity is: company, person, place, product or service. e.g. United States, Bill Gates, London.",
+        "type":"array",
+        "items":{
+           "type":"string"
+        },
+        "uniqueItems":true
+     },
+     "document_type":{
+        "type":"string",
+        "enum": ["Marketing", "Technical", "Business", "Legal", "Education", "Report", "Multimedia", "Financial", "News & Blogs", "Other"]
+     }
+  },
+  "required":[
+     "title",
+     "summary",
+     "document_type"
+  ]
+}
