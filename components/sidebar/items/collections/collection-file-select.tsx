@@ -102,7 +102,8 @@ export const CollectionFileSelect: FC<CollectionFileSelectProps> = ({
         {files
           .filter(
             file =>
-              (!showOnlyAgentFiles || file.document_agent) &&
+              ((showOnlyAgentFiles && file.document_agent) ||
+                (!showOnlyAgentFiles && !file.document_agent)) &&
               !selectedCollectionFiles.some(
                 selectedCollectionFile => selectedCollectionFile.id === file.id
               ) &&
@@ -116,6 +117,7 @@ export const CollectionFileSelect: FC<CollectionFileSelectProps> = ({
                 selectedCollectionFile => selectedCollectionFile.id === file.id
               )}
               onSelect={handleFileSelect}
+              disabled={file.document_agent && file.run_status !== "SUCCESS"}
             />
           ))}
       </DropdownMenuContent>
@@ -127,12 +129,14 @@ interface CollectionFileItemProps {
   file: CollectionFile
   selected: boolean
   onSelect: (file: CollectionFile) => void
+  disabled?: boolean
 }
 
 const CollectionFileItem: FC<CollectionFileItemProps> = ({
   file,
   selected,
-  onSelect
+  onSelect,
+  disabled
 }) => {
   const handleSelect = () => {
     onSelect(file)
@@ -140,8 +144,8 @@ const CollectionFileItem: FC<CollectionFileItemProps> = ({
 
   return (
     <div
-      className="flex cursor-pointer items-center justify-between py-0.5 hover:opacity-50"
-      onClick={handleSelect}
+      className={`flex items-center justify-between py-0.5 ${disabled ? "cursor-default opacity-50" : "cursor-pointer hover:opacity-50"}`}
+      onClick={disabled ? undefined : handleSelect}
     >
       <div className="flex grow items-center truncate">
         <div className="mr-2 min-w-[24px]">

@@ -675,6 +675,9 @@ export interface Database {
           id: string
           metadata: Json
           name: string
+          run_status:
+            | Database["public"]["Enums"]["file_processing_state"]
+            | null
           sharing: string
           size: number
           tokens: number
@@ -691,6 +694,9 @@ export interface Database {
           id?: string
           metadata?: Json
           name: string
+          run_status?:
+            | Database["public"]["Enums"]["file_processing_state"]
+            | null
           sharing?: string
           size: number
           tokens: number
@@ -707,6 +713,9 @@ export interface Database {
           id?: string
           metadata?: Json
           name?: string
+          run_status?:
+            | Database["public"]["Enums"]["file_processing_state"]
+            | null
           sharing?: string
           size?: number
           tokens?: number
@@ -1558,7 +1567,7 @@ export interface Database {
       }
     }
     Enums: {
-      [_ in never]: never
+      file_processing_state: "IN_PROGRESS" | "ERROR" | "SUCCESS"
     }
     CompositeTypes: {
       [_ in never]: never

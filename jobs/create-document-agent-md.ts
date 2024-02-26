@@ -8,6 +8,7 @@ import { createSummaryIndex } from "@/lib/rag/summary-index";
 import { extractMetadata } from "@/lib/rag/metadata";
 import * as llamaParse from "@/lib/rag/llama-parse";
 import { createServiceContext } from "@/lib/rag/service-context";
+import { isTriggerError } from "@trigger.dev/sdk";
 
 const supabase = new Supabase({
   id: "supabase",
@@ -24,6 +25,14 @@ const supabaseManagement = new SupabaseManagement({
 const db = supabaseManagement.db<Database>(
   process.env.NEXT_PUBLIC_SUPABASE_URL!
 );
+
+const defaultTaskOptions = {
+  retry: {
+    limit: 5,
+    factor: 2,
+    minTimeoutInMs: 5000,
+  },
+};
 
 client.defineJob({
   id: "create-document-agent",
@@ -49,93 +58,112 @@ client.defineJob({
   run: async (payload, io, ctx) => {
     await io.logger.info(`File uploaded: "${payload.record.name}"`);
 
-    const result = await io.supabase.runTask('parse-file', async (supabase) => {
-      const { data: file, error } = await supabase.storage.from("files").download(payload.record.file_path);
+    try {
+      // this is on purpose ouside of the run task so it's updated every time the job runs
+      await io.supabase.client
+        .from("files")
+        .update({ run_status: 'IN_PROGRESS' })
+        .eq("id", payload.record.id);
 
-      if (error) {
-        throw new Error(error.message);
-      }
+      const result = await io.supabase.runTask('parse-file', async (supabase) => {
+        const { data: file, error: downloadError } = await supabase.storage.from("files").download(payload.record.file_path);
 
-      if (!file) {
-        throw new Error('File not found');
-      }
+        if (downloadError) {
+          throw new Error(downloadError.message);
+        }
 
-      const jobId = await io.runTask('upload-file', async () => {
-        const jobId = await llamaParse.upload(file);
+        if (!file) {
+          throw new Error('File not found');
+        }
 
-        return jobId;
-      });
+        const jobId = await io.runTask('upload-file', async () => {
+          const jobId = await llamaParse.upload(file);
 
-      let status = '';
-      let i = 0;
-      while (status !== 'SUCCESS') {
-        i += 1;
+          return jobId;
+        }, defaultTaskOptions);
 
-        await io.wait(`wait-${i}`, 1);
-        status = await io.runTask(`check-job-status-${i}`, async () => {
-          const status = await llamaParse.check(jobId);
+        let status = '';
+        let i = 0;
+        while (status !== 'SUCCESS') {
+          i += 1;
 
-          return status;
-        });
-      }
+          await io.wait(`wait-${i}`, 1);
+          status = await io.runTask(`check-job-status-${i}`, async () => {
+            const status = await llamaParse.check(jobId);
 
-      const result = await io.runTask('get-job-result', async () => {
-        const result = await llamaParse.result(jobId);
+            return status;
+          }, defaultTaskOptions);
+        }
+
+        const result = await io.runTask('get-job-result', async () => {
+          const result = await llamaParse.result(jobId);
+
+          return result;
+        }, defaultTaskOptions);
 
         return result;
+      }, defaultTaskOptions);
+
+      await io.supabase.runTask('write-result-to-storage', async (supabase) => {
+        supabase
+          .storage
+          .from("files")
+          .upload(`${payload.record.file_path}.md`, result, { contentType: 'text/markdown' });
+      }, defaultTaskOptions);
+
+      const documents = [new Document({ text: result })];
+      const parser = MarkdownNodeParser.fromDefaults();
+      const nodes = parser.getNodesFromDocuments(documents);
+
+      await io.runTask('create-vector-index', async () => {
+        await createVectorIndex(payload.record.id, nodes);
+
+        return 'Vector index created';
       });
 
-      return result;
-    });
+      await io.runTask('create-summary-index', async () => {
+        const documents = [new Document({ text: result })];
+        const serviceContext: ServiceContext = {
+          ...createServiceContext(),
+          nodeParser: MarkdownNodeParser.fromDefaults(),
+        };
 
-    await io.supabase.runTask('write-result-to-storage', async (supabase) => {
-      supabase
-        .storage
+        await createSummaryIndex(payload.record.id, documents, { serviceContext });
+
+        return 'Summary index created';
+      });
+
+      const metadata = await io.runTask('extract-metadata', async () => {
+        const metadata = await extractMetadata(nodes);
+
+        return metadata;
+      });
+
+      await io.supabase.runTask("update-file-metadata", async (supabase) => {
+        const { data: updatedFile, error } = await supabase
+          .from("files")
+          .update({ metadata, run_status: 'SUCCESS' })
+          .eq("id", payload.record.id)
+          .select("*")
+          .single();
+
+        if (error) {
+          throw new Error(error.message);
+        }
+
+        return updatedFile;
+      });
+    } catch (error) {
+      await io.supabase.client
         .from("files")
-        .upload(`${payload.record.file_path}.md`, result, { contentType: 'text/markdown' });
-    });
+        .update({ run_status: 'ERROR' })
+        .eq("id", payload.record.id);
 
-    const documents = [new Document({ text: result })];
-    const parser = MarkdownNodeParser.fromDefaults();
-    const nodes = parser.getNodesFromDocuments(documents);
-
-    await io.runTask('create-vector-index', async () => {
-      await createVectorIndex(payload.record.id, nodes);
-
-      return 'Vector index created';
-    });
-
-    await io.runTask('create-summary-index', async () => {
-      const documents = [new Document({ text: result })];
-      const serviceContext: ServiceContext = {
-        ...createServiceContext(),
-        nodeParser: MarkdownNodeParser.fromDefaults(),
-      };
-
-      await createSummaryIndex(payload.record.id, documents, { serviceContext });
-
-      return 'Summary index created';
-    });
-
-    const metadata = await io.runTask('extract-metadata', async () => {
-      const metadata = await extractMetadata(nodes);
-
-      return metadata;
-    });
-
-    await io.supabase.runTask("update-file-metadata", async (supabase) => {
-      const { data: updatedFile, error } = await supabase
-        .from("files")
-        .update({ metadata })
-        .eq("id", payload.record.id)
-        .select("*")
-        .single();
-
-      if (error) {
-        throw new Error(error.message);
+      if (isTriggerError(error)) {
+        throw error;
+      } else {
+        console.error(error);
       }
-
-      return updatedFile;
-    });
+    }
   },
 });
