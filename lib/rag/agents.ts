@@ -5,7 +5,8 @@ import {
   OpenAIAgent,
   QueryEngineTool,
   ObjectRetriever,
-  ChatMessage
+  ChatMessage,
+  Metadata
 } from "llamaindex"
 import ToolMapping from "./tool-mapping"
 import { convertToolToNode, createDocumentTool } from "./tools"
@@ -97,11 +98,10 @@ export const createTopAgent = async (
 
 export const addDocumentToTopAgent = async (
   id: string,
-  document: { id: string; title: string; summary: string }
+  document: { id: string; metadata: Metadata }
 ) => {
-  const tool = createDocumentTool(document.id, document.title, document.summary)
-  // TODO check if it's necessary to add document meta to the tool node
-  const node = convertToolToNode(tool, document)
+  const tool = createDocumentTool(document.id, document.metadata)
+  const node = convertToolToNode(tool, document.metadata)
 
   const index = await getVectorIndex(id)
   index.insertNodes([node])

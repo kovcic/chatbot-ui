@@ -26,15 +26,15 @@ export const convertToolToNode = (tool: FunctionTool, metadata: Metadata) => {
   return new TextNode<any>({
     text: nodeText,
     metadata,
-    excludedEmbedMetadataKeys: _.keys(metadata)
+    excludedEmbedMetadataKeys: _.keys(
+      _.omit(metadata, ["title", "summary", "key_takeways"])
+    )
   })
 }
 
-export const createDocumentTool = (
-  id: string,
-  title: string,
-  summary: string
-) => {
+export const createDocumentTool = (id: string, metadata: Metadata) => {
+  const { title, summary } = metadata
+
   // arguments to function are passed as an object
   const answerQuestion = async ({ question }: { question: string }) => {
     const agent = await createDocumentAgent(id, title)

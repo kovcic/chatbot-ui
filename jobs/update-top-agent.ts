@@ -58,9 +58,9 @@ client.defineJob({
         await io.logger.info(`Adding file: "${file.name}" to top agent: "${collection.name}"`);
 
         await io.runTask('add-document-to-top-agent', async () => {
-          const { title, summary } = file.metadata;
+          const metadata = file.metadata;
 
-          await addDocumentToTopAgent(collection.id, { id: file.id, title, summary });
+          await addDocumentToTopAgent(collection.id, { id: file.id, metadata });
 
           return 'Vector index updated';
         });
