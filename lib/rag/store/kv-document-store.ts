@@ -8,6 +8,7 @@ import {
   RefDocInfo
 } from "llamaindex"
 import { docToJson, jsonToDoc } from "./utils"
+import { MongoKVStore } from "./mongo-kvstore"
 
 type DocMetaData = { docHash: string; refDocId?: string }
 
@@ -192,6 +193,12 @@ class KVDocumentStore extends BaseDocumentStore {
       }
     }
     return hashes
+  }
+
+  async destroy(): Promise<void> {
+    await (this.kvstore as MongoKVStore).dropCollection(this.nodeCollection)
+    await (this.kvstore as MongoKVStore).dropCollection(this.refDocCollection)
+    await (this.kvstore as MongoKVStore).dropCollection(this.metadataCollection)
   }
 }
 

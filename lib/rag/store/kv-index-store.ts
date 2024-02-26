@@ -6,6 +6,7 @@ import {
   BaseKVStore,
   BaseIndexStore
 } from "llamaindex"
+import { MongoKVStore } from "./mongo-kvstore"
 
 export class KVIndexStore extends BaseIndexStore {
   private _kvStore: BaseKVStore
@@ -49,5 +50,9 @@ export class KVIndexStore extends BaseIndexStore {
     }
 
     return _.values(jsons).map(json => jsonToIndexStruct(json))
+  }
+
+  async destroy(): Promise<void> {
+    await (this._kvStore as MongoKVStore).dropCollection(this._collection)
   }
 }

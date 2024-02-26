@@ -53,5 +53,9 @@ export const getSummaryIndex = async (name: string, options?: Options) => {
 }
 
 export const deleteSummaryIndex = async (name: string) => {
-  throw new Error("Not implemented")
+  const docStore = await createDocumentStore(name)
+  const indexStore = await createIndexStore(name)
+
+  await docStore.destroy()
+  await indexStore.destroy()
 }

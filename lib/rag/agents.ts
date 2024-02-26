@@ -6,10 +6,13 @@ import {
   QueryEngineTool,
   ObjectRetriever,
   ChatMessage,
-  Metadata
+  Metadata,
+  Document,
+  NodeRelationship
 } from "llamaindex"
 import ToolMapping from "./tool-mapping"
 import { convertToolToNode, createDocumentTool } from "./tools"
+import _ from "lodash"
 
 export const createDocumentAgent = async (
   id: string,
@@ -100,8 +103,22 @@ export const addDocumentToTopAgent = async (
   id: string,
   document: { id: string; metadata: Metadata }
 ) => {
-  const tool = createDocumentTool(document.id, document.metadata)
-  const node = convertToolToNode(tool, document.metadata)
+  const { title, summary } = document.metadata
+  const tool = createDocumentTool(document.id, title, summary)
+  const node = convertToolToNode(tool)
+
+  // Add the document as a related node to the tool
+  const refDoc = new Document({ id_: document.id, metadata: document.metadata })
+  node.relationships[NodeRelationship.SOURCE] = refDoc.asRelatedNodeInfo()
+
+  node.metadata = {
+    ...node.metadata,
+    ...document.metadata
+  }
+  node.excludedEmbedMetadataKeys = [
+    ...node.excludedEmbedMetadataKeys,
+    ..._.keys(_.omit(document.metadata, ["title", "summary", "key_takeways"]))
+  ]
 
   const index = await getVectorIndex(id)
   index.insertNodes([node])
@@ -113,6 +130,5 @@ export const removeDocumentFromTopAgent = async (
 ) => {
   const index = await getVectorIndex(id)
 
-  // TODO get nodes with metadata.id === documentId
-  // remove them from the index
+  await index.deleteRefDoc(documentId, false)
 }

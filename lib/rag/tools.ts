@@ -16,7 +16,7 @@ const getToolSchema = (
   })
 }
 
-export const convertToolToNode = (tool: FunctionTool, metadata: Metadata) => {
+export const convertToolToNode = (tool: FunctionTool) => {
   let nodeText = `Tool name: ${tool.metadata.name}\nTool description: ${tool.metadata.description}\n`
 
   if (tool.metadata.parameters) {
@@ -24,17 +24,15 @@ export const convertToolToNode = (tool: FunctionTool, metadata: Metadata) => {
   }
 
   return new TextNode<any>({
-    text: nodeText,
-    metadata,
-    excludedEmbedMetadataKeys: _.keys(
-      _.omit(metadata, ["title", "summary", "key_takeways"])
-    )
+    text: nodeText
   })
 }
 
-export const createDocumentTool = (id: string, metadata: Metadata) => {
-  const { title, summary } = metadata
-
+export const createDocumentTool = (
+  id: string,
+  title: string,
+  summary: string
+) => {
   // arguments to function are passed as an object
   const answerQuestion = async ({ question }: { question: string }) => {
     const agent = await createDocumentAgent(id, title)

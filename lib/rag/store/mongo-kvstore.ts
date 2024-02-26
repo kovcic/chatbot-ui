@@ -22,6 +22,10 @@ export class MongoKVStore extends BaseKVStore {
     return this.client.db(this.dbName).collection<StoreValue>(collectionName)
   }
 
+  async dropCollection(collectionName: string = DEFAULT_COLLECTION) {
+    return await this.client.db(this.dbName).dropCollection(collectionName)
+  }
+
   async put(
     key: string,
     value: any,

@@ -3,11 +3,12 @@ import { createDocumentTool } from "./tools"
 
 class ToolMapping extends BaseObjectNodeMapping {
   _fromNode(node: BaseNode<Metadata>) {
-    if (!node.metadata) {
-      throw new Error("Metadata must be set")
+    const id = node.sourceNode?.nodeId
+    if (!id || !node.metadata) {
+      throw new Error("No source id and/or metadata missing")
     }
 
-    const { id, title, summary } = node.metadata
+    const { title, summary } = node.metadata
     const tool = createDocumentTool(id, title, summary)
 
     return tool
