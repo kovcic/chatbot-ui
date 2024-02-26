@@ -2,8 +2,8 @@ const API_URL = "https://api.cloud.llamaindex.ai/api/parsing"
 
 type JobStatus = {
   id: string
-  detail?: string
   status: "PENDING" | "SUCCESS"
+  detail?: string
 }
 
 export const upload = async (file: Blob): Promise<string> => {
