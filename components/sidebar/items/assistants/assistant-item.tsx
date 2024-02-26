@@ -211,6 +211,7 @@ export const AssistantItem: FC<AssistantItemProps> = ({ assistant }) => {
             <Label>Files & Collections</Label>
 
             <AssistantRetrievalSelect
+              // @ts-ignore
               selectedAssistantRetrievalItems={
                 [
                   ...renderState.selectedAssistantFiles,
