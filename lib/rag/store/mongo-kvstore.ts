@@ -23,7 +23,19 @@ export class MongoKVStore extends BaseKVStore {
   }
 
   async dropCollection(collectionName: string = DEFAULT_COLLECTION) {
-    return await this.client.db(this.dbName).dropCollection(collectionName)
+    try {
+      const res = await this.client
+        .db(this.dbName)
+        .dropCollection(collectionName)
+
+      return res
+    } catch (e: any) {
+      if (e.message === "ns not found") {
+        return true
+      }
+
+      throw e
+    }
   }
 
   async put(
