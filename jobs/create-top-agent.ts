@@ -43,22 +43,5 @@ client.defineJob({
 
       return 'Vector index created';
     });
-
-
-    // const nodes = await io.runTask('chunk-documents', async () => {
-    //   const documentObjects = documents.map((document) => jsonToNode(document));
-    //   const nodes = await getNodes(documentObjects);
-
-    //   return nodes.map((node) => node.toJSON());
-    // });
-
-    // await io.runTask('create-vector-index', async () => {
-    //   const nodeObjects = nodes.map((node) => jsonToNode(node));
-
-    //   await createVectorIndex(payload.record.id, nodeObjects);
-
-    //   return 'created vector index';
-    // });
-
   },
 });

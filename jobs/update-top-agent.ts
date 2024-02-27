@@ -54,6 +54,8 @@ client.defineJob({
         throw new Error(error.message);
       }
 
+      await io.wait("Delay addition to vector index", 5);
+
       if (file.document_agent) {
         await io.logger.info(`Adding file: "${file.name}" to top agent: "${collection.name}"`);
 
