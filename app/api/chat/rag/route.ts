@@ -47,6 +47,8 @@ export async function POST(request: Request) {
         "OpenAI API Key is incorrect. Please fix it in your profile settings."
     }
 
+    console.info("Error in chat/rag/route.ts", error)
+
     return new Response(JSON.stringify({ message: errorMessage }), {
       status: errorCode
     })
