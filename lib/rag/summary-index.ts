@@ -28,9 +28,20 @@ export const createSummaryIndex = async (
       indexStore
     }))
 
-  const index = await SummaryIndex.fromDocuments(documents, {
-    serviceContext,
-    storageContext
+  // NOTE: this is not working as it's inserting document hash into the docstore, which is not required
+  // const index = await SummaryIndex.fromDocuments(documents, {
+  //   serviceContext,
+  //   storageContext
+  // })
+
+  // WORKAROUND
+  docStore.addDocuments(documents, true)
+
+  const nodes = serviceContext.nodeParser.getNodesFromDocuments(documents)
+  const index = await SummaryIndex.init({
+    nodes,
+    storageContext,
+    serviceContext
   })
 
   return index
