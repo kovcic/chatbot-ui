@@ -3,7 +3,6 @@ import { checkApiKey, getServerProfile } from "@/lib/server/server-chat-helpers"
 import { ChatSettings } from "@/types"
 import { ServerRuntime } from "next"
 import lodash from "lodash"
-import { SimpleChatHistory } from "llamaindex"
 
 export const runtime: ServerRuntime = "nodejs"
 
@@ -53,3 +52,5 @@ export async function POST(request: Request) {
     })
   }
 }
+
+export const maxDuration = 300
