@@ -54,15 +54,20 @@ client.defineJob({
         throw new Error(error.message);
       }
 
-      await io.wait("Delay addition to vector index", 5);
-
       if (file.document_agent) {
         await io.logger.info(`Adding file: "${file.name}" to top agent: "${collection.name}"`);
+
+        // count is used to determine if to create the vector index or not
+        const { count } = await io.supabase
+          .client
+          .from('collection_files')
+          .select('*', { count: 'exact', head: true })
+          .eq('collection_id', collection.id);
 
         await io.runTask('add-document-to-top-agent', async () => {
           const metadata = file.metadata;
 
-          await addDocumentToTopAgent(collection.id, { id: file.id, metadata });
+          await addDocumentToTopAgent(collection.id, { id: file.id, metadata }, count === 0);
 
           return 'Vector index updated';
         });
