@@ -121,8 +121,12 @@ export const addDocumentToTopAgent = async (
     ..._.keys(_.omit(document.metadata, ["title", "summary", "key_takeways"]))
   ]
 
-  const index = await (createIndex ? createVectorIndex(id) : getVectorIndex(id))
-  index.insertNodes([node])
+  if (createIndex) {
+    await createVectorIndex(id, [node])
+  } else {
+    const index = await getVectorIndex(id)
+    index.insertNodes([node])
+  }
 }
 
 export const removeDocumentFromTopAgent = async (
