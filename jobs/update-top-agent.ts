@@ -64,7 +64,7 @@ client.defineJob({
           .select('*', { count: 'exact', head: true })
           .eq('collection_id', collection.id);
 
-        await io.logger.info(`To top agent: "${collection.name} has ${count} documents"`);
+        await io.logger.info(`Top agent: "${collection.name}" has ${count} documents`);
 
         await io.runTask('add-document-to-top-agent', async () => {
           const metadata = file.metadata;
