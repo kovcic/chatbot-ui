@@ -6,7 +6,10 @@ import {
 import { createVectorStore } from "./stores"
 import { createServiceContext } from "./service-context"
 
-export const createVectorIndex = async (name: string, nodes: BaseNode[]) => {
+export const createVectorIndex = async (
+  name: string,
+  nodes: BaseNode[] = []
+) => {
   const serviceContext = createServiceContext()
   const vectorStore = createVectorStore(name)
   const storageContext = await storageContextFromDefaults({ vectorStore })

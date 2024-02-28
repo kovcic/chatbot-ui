@@ -32,6 +32,7 @@ client.defineJob({
       },
     },
   }),
+  enabled: false, // disabled as we are creating the top agent when adding files to a collection
   integrations: {
     supabase,
   },

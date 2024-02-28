@@ -1,4 +1,4 @@
-import { getVectorIndex } from "./vector-index"
+import { getVectorIndex, createVectorIndex } from "./vector-index"
 import { getSummaryIndex } from "./summary-index"
 import {
   OpenAI,
@@ -101,7 +101,8 @@ export const createTopAgent = async (
 
 export const addDocumentToTopAgent = async (
   id: string,
-  document: { id: string; metadata: Metadata }
+  document: { id: string; metadata: Metadata },
+  createIndex: boolean = false
 ) => {
   const { title, summary } = document.metadata
   const tool = createDocumentTool(document.id, title, summary)
@@ -120,7 +121,7 @@ export const addDocumentToTopAgent = async (
     ..._.keys(_.omit(document.metadata, ["title", "summary", "key_takeways"]))
   ]
 
-  const index = await getVectorIndex(id)
+  const index = await (createIndex ? createVectorIndex(id) : getVectorIndex(id))
   index.insertNodes([node])
 }
 
