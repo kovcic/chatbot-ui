@@ -138,7 +138,11 @@ export const WorkspaceSettings: FC<WorkspaceSettingsProps> = ({}) => {
         embeddingsProvider: defaultChatSettings.embeddingsProvider as
           | "openai"
           | "local",
-        collectionId: undefined
+        collectionId: undefined,
+        similarityTopK: undefined,
+        docAgentModel: undefined,
+        docAgentTemperature: undefined,
+        docAgentSimilarityTopK: undefined
       })
     }
 

@@ -107,7 +107,11 @@ export const useChatHandler = () => {
         embeddingsProvider: selectedAssistant.embeddings_provider as
           | "openai"
           | "local",
-        collectionId: undefined
+        collectionId: undefined,
+        similarityTopK: undefined,
+        docAgentModel: undefined,
+        docAgentTemperature: undefined,
+        docAgentSimilarityTopK: undefined
       })
     } else if (selectedPreset) {
       setChatSettings({
@@ -121,7 +125,12 @@ export const useChatHandler = () => {
         embeddingsProvider: selectedPreset.embeddings_provider as
           | "openai"
           | "local",
-        collectionId: selectedPreset.collection_id || undefined
+        collectionId: selectedPreset.collection_id || undefined,
+        similarityTopK: selectedPreset.similarity_top_k || undefined,
+        docAgentModel: (selectedPreset.doc_agent_model as LLMID) || undefined,
+        docAgentTemperature: selectedPreset.doc_agent_temperature || undefined,
+        docAgentSimilarityTopK:
+          selectedPreset.doc_agent_similarity_top_k || undefined
       })
     } else if (selectedWorkspace) {
       setChatSettings({
@@ -139,7 +148,11 @@ export const useChatHandler = () => {
         embeddingsProvider:
           (selectedWorkspace.embeddings_provider as "openai" | "local") ||
           "openai",
-        collectionId: undefined
+        collectionId: undefined,
+        similarityTopK: undefined,
+        docAgentModel: undefined,
+        docAgentTemperature: undefined,
+        docAgentSimilarityTopK: undefined
       })
     }
 

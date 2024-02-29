@@ -5,11 +5,15 @@ export interface ChatSettings {
   model: LLMID
   prompt: string
   temperature: number
+  similarityTopK: number | undefined
   contextLength: number
   includeProfileContext: boolean
   includeWorkspaceInstructions: boolean
   embeddingsProvider: "openai" | "local"
   collectionId: string | undefined
+  docAgentModel: LLMID | undefined
+  docAgentTemperature: number | undefined
+  docAgentSimilarityTopK: number | undefined
 }
 
 export interface ChatPayload {

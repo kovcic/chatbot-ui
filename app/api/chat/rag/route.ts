@@ -27,7 +27,20 @@ export async function POST(request: Request) {
     const rest = lodash.tail(messages)
     const message = lodash.last(rest).content
     const chatHistory = lodash.initial(rest)
-    const agent = await createTopAgent(collectionId, chatHistory)
+    const agent = await createTopAgent(
+      collectionId,
+      chatHistory,
+      {
+        model: chatSettings.model,
+        temperature: chatSettings.temperature,
+        similarityTopK: chatSettings.similarityTopK
+      },
+      {
+        model: chatSettings.docAgentModel,
+        temperature: chatSettings.docAgentTemperature,
+        similarityTopK: chatSettings.docAgentSimilarityTopK
+      }
+    )
 
     const chatResponse = await agent.chat({ message })
     // TODO check if it can be streamed

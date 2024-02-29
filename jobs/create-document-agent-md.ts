@@ -112,7 +112,7 @@ client.defineJob({
       }, defaultTaskOptions);
 
       const documents = [new Document({ text: result })];
-      const parser = MarkdownNodeParser.fromDefaults();
+      const parser = MarkdownNodeParser.fromDefaults({ includeMetadata: false });
       const nodes = parser.getNodesFromDocuments(documents);
 
       await io.runTask('create-vector-index', async () => {
@@ -125,7 +125,7 @@ client.defineJob({
         const documents = [new Document({ text: result })];
         const serviceContext: ServiceContext = {
           ...createServiceContext(),
-          nodeParser: MarkdownNodeParser.fromDefaults(),
+          nodeParser: MarkdownNodeParser.fromDefaults({ includeMetadata: false }),
         };
 
         await createSummaryIndex(payload.record.id, documents, { serviceContext });
