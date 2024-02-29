@@ -57,7 +57,7 @@ export const AgentSettingsForm: FC<ChatSettingsFormProps> = ({
             })
           }}
           min={0}
-          max={1}
+          max={2}
           step={0.1}
         />
       </div>
@@ -113,7 +113,7 @@ export const AgentSettingsForm: FC<ChatSettingsFormProps> = ({
             })
           }}
           min={0}
-          max={1}
+          max={2}
           step={0.1}
         />
       </div>
