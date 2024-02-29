@@ -66,6 +66,53 @@ export const FileItem: FC<FileItemProps> = ({ file }) => {
               maxLength={FILE_DESCRIPTION_MAX}
             />
           </div>
+
+          {file.document_agent && (
+            <>
+              <div className="space-y-1">
+                <Label>Processing status: {file.run_status}</Label>
+              </div>
+              <div className="space-y-1">
+                <Label>
+                  Date: {(file.metadata as Record<string, any>)?.date || "n/a"}
+                </Label>
+              </div>
+              <div className="space-y-1">
+                <Label>
+                  Document type:{" "}
+                  {(file.metadata as Record<string, any>)?.document_type}
+                </Label>
+              </div>
+              <div className="space-y-1">
+                <Label>Title</Label>
+                <p>{(file.metadata as Record<string, any>)?.title}</p>
+              </div>
+              <div className="space-y-1">
+                <Label>Summary</Label>
+                <p>{(file.metadata as Record<string, any>)?.summary}</p>
+              </div>
+              <div className="space-y-1">
+                <Label>Key takeways</Label>
+                <p>{(file.metadata as Record<string, any>)?.key_takeways}</p>
+              </div>
+              <div className="space-y-1">
+                <Label>Topics</Label>
+                <p>
+                  {(file.metadata as Record<string, any>)?.topics_covered?.join(
+                    ", "
+                  )}
+                </p>
+              </div>
+              <div className="space-y-1">
+                <Label>Entitites</Label>
+                <p>
+                  {(
+                    file.metadata as Record<string, any>
+                  )?.entities_covered?.join(", ")}
+                </p>
+              </div>
+            </>
+          )}
         </>
       )}
     />
