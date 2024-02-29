@@ -73,8 +73,8 @@ export const createDocumentAgent = async (
         role: "system"
       },
       ...chatHistory
-    ],
-    verbose: true
+    ]
+    // verbose: true
   })
 
   return agent
@@ -111,8 +111,8 @@ export const createTopAgent = async (
       ...chatHistory
     ],
     tools: [], // required by type
-    toolRetriever,
-    verbose: true
+    toolRetriever
+    // verbose: true
   })
 
   return agent
