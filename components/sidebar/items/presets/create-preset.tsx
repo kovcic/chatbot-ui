@@ -9,6 +9,8 @@ import { TablesInsert } from "@/supabase/types"
 import { FC, useContext, useState } from "react"
 import { PresetCollectionSelect } from "./preset-collection-select"
 import { PresetCollection } from "@/types"
+import { Slider } from "@/components/ui/slider"
+import { AgentSettingsForm } from "@/components/ui/agent-settings-form"
 
 interface CreatePresetProps {
   isOpen: boolean
@@ -33,7 +35,11 @@ export const CreatePreset: FC<CreatePresetProps> = ({
     includeWorkspaceInstructions:
       selectedWorkspace?.include_workspace_instructions,
     embeddingsProvider: selectedWorkspace?.embeddings_provider,
-    collectionId: undefined as string | undefined
+    collectionId: undefined as string | undefined,
+    similarityTopK: 2 as number | undefined,
+    docAgentModel: undefined as string | undefined,
+    docAgentTemperature: 1 as number | undefined,
+    docAgentSimilarityTopK: 2 as number | undefined
   })
   const [agent, setAgent] = useState(false)
   const { collections } = useContext(ChatbotUIContext)
@@ -63,7 +69,11 @@ export const CreatePreset: FC<CreatePresetProps> = ({
           prompt: presetChatSettings.prompt,
           temperature: presetChatSettings.temperature,
           embeddings_provider: presetChatSettings.embeddingsProvider,
-          collection_id: presetChatSettings.collectionId
+          collection_id: presetChatSettings.collectionId,
+          similarity_top_k: presetChatSettings.similarityTopK,
+          doc_agent_model: presetChatSettings.docAgentModel,
+          doc_agent_temperature: presetChatSettings.docAgentTemperature,
+          doc_agent_similarity_top_k: presetChatSettings.docAgentSimilarityTopK
         } as TablesInsert<"presets">
       }
       renderInputs={() => (
@@ -88,12 +98,11 @@ export const CreatePreset: FC<CreatePresetProps> = ({
             <Label>Use as Top agent?</Label>
           </div>
 
-          <ChatSettingsForm
-            chatSettings={presetChatSettings as any}
-            onChangeChatSettings={setPresetChatSettings}
-            useAdvancedDropdown={true}
-          >
-            {agent && (
+          {agent && (
+            <AgentSettingsForm
+              chatSettings={presetChatSettings as any}
+              onChangeChatSettings={setPresetChatSettings}
+            >
               <div className="space-y-1">
                 <Label>Collection</Label>
                 <PresetCollectionSelect
@@ -108,8 +117,15 @@ export const CreatePreset: FC<CreatePresetProps> = ({
                   }}
                 />
               </div>
-            )}
-          </ChatSettingsForm>
+            </AgentSettingsForm>
+          )}
+          {!agent && (
+            <ChatSettingsForm
+              chatSettings={presetChatSettings as any}
+              onChangeChatSettings={setPresetChatSettings}
+              useAdvancedDropdown={true}
+            />
+          )}
         </>
       )}
     />

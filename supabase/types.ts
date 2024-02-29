@@ -1043,6 +1043,9 @@ export interface Database {
           context_length: number
           created_at: string
           description: string
+          doc_agent_model: string | null
+          doc_agent_similarity_top_k: number | null
+          doc_agent_temperature: number | null
           embeddings_provider: string
           folder_id: string | null
           id: string
@@ -1052,6 +1055,7 @@ export interface Database {
           name: string
           prompt: string
           sharing: string
+          similarity_top_k: number | null
           temperature: number
           updated_at: string | null
           user_id: string
@@ -1061,6 +1065,9 @@ export interface Database {
           context_length: number
           created_at?: string
           description: string
+          doc_agent_model?: string | null
+          doc_agent_similarity_top_k?: number | null
+          doc_agent_temperature?: number | null
           embeddings_provider: string
           folder_id?: string | null
           id?: string
@@ -1070,6 +1077,7 @@ export interface Database {
           name: string
           prompt: string
           sharing?: string
+          similarity_top_k?: number | null
           temperature: number
           updated_at?: string | null
           user_id: string
@@ -1079,6 +1087,9 @@ export interface Database {
           context_length?: number
           created_at?: string
           description?: string
+          doc_agent_model?: string | null
+          doc_agent_similarity_top_k?: number | null
+          doc_agent_temperature?: number | null
           embeddings_provider?: string
           folder_id?: string | null
           id?: string
@@ -1088,6 +1099,7 @@ export interface Database {
           name?: string
           prompt?: string
           sharing?: string
+          similarity_top_k?: number | null
           temperature?: number
           updated_at?: string | null
           user_id?: string

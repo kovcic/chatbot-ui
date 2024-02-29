@@ -10,6 +10,7 @@ import { SidebarItem } from "../all/sidebar-display-item"
 import { PresetCollection } from "@/types"
 import { PresetCollectionSelect } from "./preset-collection-select"
 import { ChatbotUIContext } from "@/context/context"
+import { AgentSettingsForm } from "@/components/ui/agent-settings-form"
 
 interface PresetItemProps {
   preset: Tables<"presets">
@@ -26,7 +27,13 @@ export const PresetItem: FC<PresetItemProps> = ({ preset }) => {
     contextLength: preset.context_length,
     includeProfileContext: preset.include_profile_context,
     includeWorkspaceInstructions: preset.include_workspace_instructions,
-    collectionId: preset.collection_id || undefined
+    collectionId: preset.collection_id || undefined,
+    similarityTopK: preset.similarity_top_k ?? (2 as number | undefined),
+    docAgentModel: preset.doc_agent_model || undefined,
+    docAgentTemperature:
+      preset.doc_agent_temperature ?? (1 as number | undefined),
+    docAgentSimilarityTopK:
+      preset.doc_agent_similarity_top_k ?? (2 as number | undefined)
   })
 
   const { collections } = useContext(ChatbotUIContext)
@@ -58,7 +65,11 @@ export const PresetItem: FC<PresetItemProps> = ({ preset }) => {
         model: presetChatSettings.model,
         prompt: presetChatSettings.prompt,
         temperature: presetChatSettings.temperature,
-        collection_id: presetChatSettings.collectionId
+        collection_id: presetChatSettings.collectionId,
+        similarity_top_k: presetChatSettings.similarityTopK,
+        doc_agent_model: presetChatSettings.docAgentModel,
+        doc_agent_temperature: presetChatSettings.docAgentTemperature,
+        doc_agent_similarity_top_k: presetChatSettings.docAgentSimilarityTopK
       }}
       renderInputs={() => (
         <>
@@ -73,12 +84,11 @@ export const PresetItem: FC<PresetItemProps> = ({ preset }) => {
             />
           </div>
 
-          <ChatSettingsForm
-            chatSettings={presetChatSettings as any}
-            onChangeChatSettings={setPresetChatSettings}
-            useAdvancedDropdown={true}
-          >
-            {preset.collection_id && (
+          {preset.collection_id && (
+            <AgentSettingsForm
+              chatSettings={presetChatSettings as any}
+              onChangeChatSettings={setPresetChatSettings}
+            >
               <div className="space-y-1">
                 <Label>Collection</Label>
                 <PresetCollectionSelect
@@ -93,8 +103,16 @@ export const PresetItem: FC<PresetItemProps> = ({ preset }) => {
                   }}
                 />
               </div>
-            )}
-          </ChatSettingsForm>
+            </AgentSettingsForm>
+          )}
+
+          {!preset.collection_id && (
+            <ChatSettingsForm
+              chatSettings={presetChatSettings as any}
+              onChangeChatSettings={setPresetChatSettings}
+              useAdvancedDropdown={true}
+            />
+          )}
         </>
       )}
     />

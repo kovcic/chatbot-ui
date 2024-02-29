@@ -62,6 +62,11 @@ export const QuickSettings: FC<QuickSettingsProps> = ({}) => {
     contentType: "presets" | "assistants"
   ) => {
     let collectionId = undefined
+    let similarityTopK = undefined
+    let docAgentModel = undefined
+    let docAgentTemperature = undefined
+    let docAgentSimilarityTopK = undefined
+
     if (contentType === "assistants") {
       setSelectedAssistant(item as Tables<"assistants">)
 
@@ -103,6 +108,13 @@ export const QuickSettings: FC<QuickSettingsProps> = ({}) => {
       setSelectedPreset(item as Tables<"presets">)
       setSelectedAssistant(null)
       collectionId = (item as Tables<"presets">).collection_id || undefined
+      similarityTopK = (item as Tables<"presets">).similarity_top_k || undefined
+      docAgentModel =
+        ((item as Tables<"presets">).doc_agent_model as LLMID) || undefined
+      docAgentTemperature =
+        (item as Tables<"presets">).doc_agent_temperature || undefined
+      docAgentSimilarityTopK =
+        (item as Tables<"presets">).doc_agent_similarity_top_k || undefined
     }
 
     setChatSettings({
@@ -113,7 +125,11 @@ export const QuickSettings: FC<QuickSettingsProps> = ({}) => {
       includeProfileContext: item.include_profile_context,
       includeWorkspaceInstructions: item.include_workspace_instructions,
       embeddingsProvider: item.embeddings_provider as "openai" | "local",
-      collectionId
+      collectionId,
+      similarityTopK,
+      docAgentModel,
+      docAgentTemperature,
+      docAgentSimilarityTopK
     })
   }
 

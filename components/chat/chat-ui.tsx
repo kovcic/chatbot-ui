@@ -171,7 +171,11 @@ export const ChatUI: FC<ChatUIProps> = ({}) => {
       includeProfileContext: chat.include_profile_context,
       includeWorkspaceInstructions: chat.include_workspace_instructions,
       embeddingsProvider: chat.embeddings_provider as "openai" | "local",
-      collectionId: undefined
+      collectionId: undefined,
+      similarityTopK: undefined,
+      docAgentModel: undefined,
+      docAgentTemperature: undefined,
+      docAgentSimilarityTopK: undefined
     })
   }
 

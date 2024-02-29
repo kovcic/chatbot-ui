@@ -2,6 +2,8 @@ import { Tables, TablesInsert } from "@/supabase/types"
 import { FunctionTool, Metadata, TextNode } from "llamaindex"
 import _ from "lodash"
 import { createDocumentAgent } from "./agents"
+import { Agent } from "http"
+import { AgentOptions } from "@/types"
 
 const getToolSchema = (
   description: string,
@@ -31,11 +33,12 @@ export const convertToolToNode = (tool: FunctionTool) => {
 export const createDocumentTool = (
   id: string,
   title: string,
-  summary: string
+  summary: string,
+  options: AgentOptions = {}
 ) => {
   // arguments to function are passed as an object
   const answerQuestion = async ({ question }: { question: string }) => {
-    const agent = await createDocumentAgent(id, title)
+    const agent = await createDocumentAgent(id, title, [], options)
     const answer = await agent.query({ query: question })
 
     return answer.response

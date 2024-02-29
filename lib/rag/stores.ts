@@ -14,14 +14,14 @@ export const createVectorStore = (collectionName: string) => {
 }
 
 export const createDocumentStore = async (collectionName: string) => {
-  const kvstore = new MongoKVStore(process.env.MONGO_DB_URI!, "docstore")
+  const kvstore = new MongoKVStore(process.env.MONGODB_URI!, "docstore")
   const store = new KVDocumentStore(kvstore, collectionName)
 
   return store
 }
 
 export const createIndexStore = async (collectionName: string) => {
-  const kvstore = new MongoKVStore(process.env.MONGO_DB_URI!, "index_store")
+  const kvstore = new MongoKVStore(process.env.MONGODB_URI!, "index_store")
   const store = new KVIndexStore(kvstore, collectionName)
 
   return store

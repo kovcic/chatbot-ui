@@ -1,7 +1,15 @@
 import { BaseNode, BaseObjectNodeMapping, Metadata, TextNode } from "llamaindex"
 import { createDocumentTool } from "./tools"
+import { AgentOptions } from "@/types"
 
 class ToolMapping extends BaseObjectNodeMapping {
+  private options: AgentOptions
+
+  constructor(options: AgentOptions) {
+    super()
+    this.options = options
+  }
+
   _fromNode(node: BaseNode<Metadata>) {
     const id = node.sourceNode?.nodeId
     if (!id || !node.metadata) {
@@ -9,7 +17,7 @@ class ToolMapping extends BaseObjectNodeMapping {
     }
 
     const { title, summary } = node.metadata
-    const tool = createDocumentTool(id, title, summary)
+    const tool = createDocumentTool(id, title, summary, this.options)
 
     return tool
   }

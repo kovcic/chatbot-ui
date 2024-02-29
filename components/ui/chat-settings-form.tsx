@@ -25,15 +25,13 @@ interface ChatSettingsFormProps {
   onChangeChatSettings: (value: ChatSettings) => void
   useAdvancedDropdown?: boolean
   showTooltip?: boolean
-  children?: React.ReactNode
 }
 
 export const ChatSettingsForm: FC<ChatSettingsFormProps> = ({
   chatSettings,
   onChangeChatSettings,
   useAdvancedDropdown = true,
-  showTooltip = true,
-  children
+  showTooltip = true
 }) => {
   const { profile, availableLocalModels } = useContext(ChatbotUIContext)
 
@@ -51,44 +49,37 @@ export const ChatSettingsForm: FC<ChatSettingsFormProps> = ({
           }}
         />
       </div>
+      <div className="space-y-1">
+        <Label>Prompt</Label>
 
-      {children}
+        <TextareaAutosize
+          className="bg-background border-input border-2"
+          placeholder="You are a helpful AI assistant."
+          onValueChange={prompt => {
+            onChangeChatSettings({ ...chatSettings, prompt })
+          }}
+          value={chatSettings.prompt}
+          minRows={3}
+          maxRows={6}
+        />
+      </div>
 
-      {!children && (
-        <>
-          <div className="space-y-1">
-            <Label>Prompt</Label>
-
-            <TextareaAutosize
-              className="bg-background border-input border-2"
-              placeholder="You are a helpful AI assistant."
-              onValueChange={prompt => {
-                onChangeChatSettings({ ...chatSettings, prompt })
-              }}
-              value={chatSettings.prompt}
-              minRows={3}
-              maxRows={6}
-            />
-          </div>
-
-          {useAdvancedDropdown ? (
-            <AdvancedSettings>
-              <AdvancedContent
-                chatSettings={chatSettings}
-                onChangeChatSettings={onChangeChatSettings}
-                showTooltip={showTooltip}
-              />
-            </AdvancedSettings>
-          ) : (
-            <div>
-              <AdvancedContent
-                chatSettings={chatSettings}
-                onChangeChatSettings={onChangeChatSettings}
-                showTooltip={showTooltip}
-              />
-            </div>
-          )}
-        </>
+      {useAdvancedDropdown ? (
+        <AdvancedSettings>
+          <AdvancedContent
+            chatSettings={chatSettings}
+            onChangeChatSettings={onChangeChatSettings}
+            showTooltip={showTooltip}
+          />
+        </AdvancedSettings>
+      ) : (
+        <div>
+          <AdvancedContent
+            chatSettings={chatSettings}
+            onChangeChatSettings={onChangeChatSettings}
+            showTooltip={showTooltip}
+          />
+        </div>
       )}
     </div>
   )

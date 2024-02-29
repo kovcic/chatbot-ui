@@ -8,22 +8,37 @@ import {
   ChatMessage,
   Metadata,
   Document,
-  NodeRelationship
+  NodeRelationship,
+  RetrieverQueryEngine,
+  SummaryRetrieverMode
 } from "llamaindex"
 import ToolMapping from "./tool-mapping"
 import { convertToolToNode, createDocumentTool } from "./tools"
 import _ from "lodash"
+import { AgentOptions } from "@/types"
 
 export const createDocumentAgent = async (
   id: string,
   title: string,
-  chatHistory: ChatMessage[] = []
+  chatHistory: ChatMessage[] = [],
+  options: AgentOptions = {}
 ) => {
   const vectorIndex = await getVectorIndex(id)
   const summaryIndex = await getSummaryIndex(id)
 
-  const vectorQueryEngine = vectorIndex.asQueryEngine()
-  const summaryQueryEngine = summaryIndex.asQueryEngine()
+  const vectorIndexRetriever = vectorIndex.asRetriever({
+    similarityTopK: options.similarityTopK
+  })
+  const summaryIndexRetriever = summaryIndex.asRetriever({
+    mode: SummaryRetrieverMode.DEFAULT
+  })
+
+  const vectorQueryEngine = vectorIndex.asQueryEngine({
+    retriever: vectorIndexRetriever
+  })
+  const summaryQueryEngine = summaryIndex.asQueryEngine({
+    retriever: summaryIndexRetriever
+  })
 
   const tools = [
     new QueryEngineTool({
@@ -42,8 +57,8 @@ export const createDocumentAgent = async (
     })
   ]
   const llm = new OpenAI({
-    model: "gpt-4-0125-preview",
-    temperature: 0.1,
+    model: options.model || "gpt-4-0125-preview",
+    temperature: options.temperature || 0.1,
     apiKey: process.env.OPENAI_API_KEY
   })
   // const llm = new OpenAI({ model: "gpt-3.5-turbo", temperature: 0.1, apiKey: process.env.OPENAI_API_KEY });
@@ -58,8 +73,8 @@ export const createDocumentAgent = async (
         role: "system"
       },
       ...chatHistory
-    ]
-    // verbose: true
+    ],
+    verbose: true
   })
 
   return agent
@@ -67,18 +82,22 @@ export const createDocumentAgent = async (
 
 export const createTopAgent = async (
   id: string,
-  chatHistory: ChatMessage[] = []
+  chatHistory: ChatMessage[] = [],
+  options: AgentOptions = {},
+  documentAgentOptions: AgentOptions = {}
 ) => {
   const index = await getVectorIndex(id)
-  const toolMapping = new ToolMapping()
-  const toolRetriever = new ObjectRetriever(index.asRetriever(), toolMapping)
+  const toolMapping = new ToolMapping(documentAgentOptions)
+  const toolRetriever = new ObjectRetriever(
+    index.asRetriever({ similarityTopK: options.similarityTopK }),
+    toolMapping
+  )
 
   const llm = new OpenAI({
-    model: "gpt-4-0125-preview",
-    temperature: 0.1,
+    model: options.model || "gpt-4-0125-preview",
+    temperature: options.temperature ?? 0.1,
     apiKey: process.env.OPENAI_API_KEY
   })
-  // const llm = new OpenAI({ model: "gpt-3.5-turbo", temperature: 0.1, apiKey: process.env.OPENAI_API_KEY });
   const systemPrompt =
     "You are an agent designed to answer queries about a set of given documents.\nPlease always use the tools provided to answer a question. Do not rely on prior knowledge."
 
@@ -92,8 +111,8 @@ export const createTopAgent = async (
       ...chatHistory
     ],
     tools: [], // required by type
-    toolRetriever
-    // verbose: true
+    toolRetriever,
+    verbose: true
   })
 
   return agent
