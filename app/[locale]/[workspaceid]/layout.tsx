@@ -167,7 +167,11 @@ export default function WorkspaceLayout({ children }: WorkspaceLayoutProps) {
         workspace?.include_workspace_instructions || true,
       embeddingsProvider:
         (workspace?.embeddings_provider as "openai" | "local") || "openai",
-      collectionId: undefined
+      collectionId: undefined,
+      similarityTopK: undefined,
+      docAgentModel: undefined,
+      docAgentTemperature: undefined,
+      docAgentSimilarityTopK: undefined
     })
 
     setLoading(false)
