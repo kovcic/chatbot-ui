@@ -1,8 +1,6 @@
-import { Tables, TablesInsert } from "@/supabase/types"
-import { FunctionTool, Metadata, TextNode } from "llamaindex"
+import { FunctionTool, TextNode } from "llamaindex"
 import _ from "lodash"
 import { createDocumentAgent } from "./agents"
-import { Agent } from "http"
 import { AgentOptions } from "@/types"
 
 const getToolSchema = (
