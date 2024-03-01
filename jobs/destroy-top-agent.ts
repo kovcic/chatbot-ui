@@ -16,7 +16,7 @@ const db = supabaseManagement.db<Database>(
 client.defineJob({
   id: "destroy-top-agent",
   name: "Top Agent Destruction",
-  version: "1.0.0",
+  version: "1.1.0",
   trigger: db.onDeleted({
     schema: "public",
     table: "collections",
@@ -27,6 +27,7 @@ client.defineJob({
     },
   }),
   run: async (payload, io, ctx) => {
+    console.info('Running job', ctx.job, payload);
     await io.logger.info(`Collection deleted: "${payload.old_record.name}"`);
 
     await io.runTask('delete-vector-index', async () => {

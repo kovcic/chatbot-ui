@@ -22,7 +22,7 @@ const db = supabaseManagement.db<Database>(
 client.defineJob({
   id: "create-top-agent",
   name: "Top Agent Creation",
-  version: "1.0.0",
+  version: "1.1.0",
   trigger: db.onInserted({
     schema: "public",
     table: "collections",
@@ -37,6 +37,7 @@ client.defineJob({
     supabase,
   },
   run: async (payload, io, ctx) => {
+    console.info('Running job', ctx.job, payload);
     await io.logger.info(`Collection created: "${payload.record.name}"`);
 
     await io.runTask('create-vector-index', async () => {

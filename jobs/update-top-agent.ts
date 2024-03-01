@@ -22,7 +22,7 @@ const db = supabaseManagement.db<Database>(
 client.defineJob({
   id: "add-document-to-top-agent",
   name: "Top Agent Document Addition",
-  version: "1.0.0",
+  version: "1.1.0",
   trigger: db.onInserted({
     schema: "public",
     table: "collection_files",
@@ -31,6 +31,7 @@ client.defineJob({
     supabase,
   },
   run: async (payload, io, ctx) => {
+    console.info('Running job', ctx.job, payload);
     const { data: collection, error } = await io.supabase
       .client
       .from('collections')
@@ -81,7 +82,7 @@ client.defineJob({
 client.defineJob({
   id: "remove-document-from-top-agent",
   name: "Top Agent Document Removal",
-  version: "1.0.0",
+  version: "1.1.0",
   trigger: db.onDeleted({
     schema: "public",
     table: "collection_files",
@@ -102,6 +103,7 @@ client.defineJob({
       await io.logger.info('Ignore as collection not present');
     } else {
       if (collection.top_agent) {
+        console.info('Running job', ctx.job, payload);
         const { data: file, error } = await io.supabase
           .client
           .from('files')
