@@ -1,14 +1,12 @@
 import { client } from "@/trigger";
 import { Database } from "@/supabase/types";
 import { SupabaseManagement, Supabase } from "@trigger.dev/supabase";
-import { getNodes, getDocuments } from "@/lib/rag/nodes";
-import { jsonToNode, Document, ServiceContext, MarkdownNodeParser } from "llamaindex";
+import { Document, ServiceContext, MarkdownNodeParser } from "llamaindex";
 import { createVectorIndex } from "@/lib/rag/vector-index";
 import { createSummaryIndex } from "@/lib/rag/summary-index";
 import { extractMetadata } from "@/lib/rag/metadata";
 import * as llamaParse from "@/lib/rag/llama-parse";
 import { createServiceContext } from "@/lib/rag/service-context";
-import { isTriggerError } from "@trigger.dev/sdk";
 
 const supabase = new Supabase({
   id: "supabase",
@@ -37,7 +35,7 @@ const defaultTaskOptions = {
 client.defineJob({
   id: "create-document-agent",
   name: "Document Agent Creation",
-  version: "1.0.1",
+  version: "1.1.0",
   trigger: db.onUpdated({
     schema: "public",
     table: "files",
@@ -56,6 +54,7 @@ client.defineJob({
     supabase,
   },
   run: async (payload, io, ctx) => {
+    console.info('Running job', ctx.job, payload);
     await io.logger.info(`File uploaded: "${payload.record.name}"`);
 
     try {
@@ -154,16 +153,13 @@ client.defineJob({
         return updatedFile;
       });
     } catch (error) {
+      console.info('Error', ctx, error);
       await io.supabase.client
         .from("files")
         .update({ run_status: 'ERROR' })
         .eq("id", payload.record.id);
 
-      if (isTriggerError(error)) {
-        throw error;
-      } else {
-        console.error(error);
-      }
+      throw error;
     }
   },
 });

@@ -27,7 +27,7 @@ const db = supabaseManagement.db<Database>(
 client.defineJob({
   id: "create-document-agent",
   name: "Document Agent Creation",
-  version: "1.0.1",
+  version: "1.1.0",
   trigger: db.onUpdated({
     schema: "public",
     table: "files",
@@ -46,6 +46,7 @@ client.defineJob({
     supabase,
   },
   run: async (payload, io, ctx) => {
+    console.info('Running job', ctx.job, payload);
     await io.logger.info(`File uploaded: "${payload.record.name}"`);
 
     const documents = await io.supabase.runTask('parse-file', async (supabase) => {
