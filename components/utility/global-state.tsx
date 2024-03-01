@@ -86,6 +86,7 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
     embeddingsProvider: "openai",
     collectionId: undefined,
     similarityTopK: undefined,
+    docAgentPrompt: undefined,
     docAgentModel: undefined,
     docAgentTemperature: undefined,
     docAgentSimilarityTopK: undefined

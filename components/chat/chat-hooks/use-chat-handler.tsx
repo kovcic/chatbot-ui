@@ -109,6 +109,7 @@ export const useChatHandler = () => {
           | "local",
         collectionId: undefined,
         similarityTopK: undefined,
+        docAgentPrompt: undefined,
         docAgentModel: undefined,
         docAgentTemperature: undefined,
         docAgentSimilarityTopK: undefined
@@ -127,6 +128,8 @@ export const useChatHandler = () => {
           | "local",
         collectionId: selectedPreset.collection_id || undefined,
         similarityTopK: selectedPreset.similarity_top_k || undefined,
+        docAgentPrompt:
+          (selectedPreset.doc_agent_prompt as string) || undefined,
         docAgentModel: (selectedPreset.doc_agent_model as LLMID) || undefined,
         docAgentTemperature: selectedPreset.doc_agent_temperature || undefined,
         docAgentSimilarityTopK:
@@ -150,6 +153,7 @@ export const useChatHandler = () => {
           "openai",
         collectionId: undefined,
         similarityTopK: undefined,
+        docAgentPrompt: undefined,
         docAgentModel: undefined,
         docAgentTemperature: undefined,
         docAgentSimilarityTopK: undefined

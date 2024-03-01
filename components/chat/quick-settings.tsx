@@ -63,6 +63,7 @@ export const QuickSettings: FC<QuickSettingsProps> = ({}) => {
   ) => {
     let collectionId = undefined
     let similarityTopK = undefined
+    let docAgentPrompt = undefined
     let docAgentModel = undefined
     let docAgentTemperature = undefined
     let docAgentSimilarityTopK = undefined
@@ -109,6 +110,8 @@ export const QuickSettings: FC<QuickSettingsProps> = ({}) => {
       setSelectedAssistant(null)
       collectionId = (item as Tables<"presets">).collection_id || undefined
       similarityTopK = (item as Tables<"presets">).similarity_top_k || undefined
+      docAgentPrompt =
+        ((item as Tables<"presets">).doc_agent_prompt as string) || undefined
       docAgentModel =
         ((item as Tables<"presets">).doc_agent_model as LLMID) || undefined
       docAgentTemperature =
@@ -127,6 +130,7 @@ export const QuickSettings: FC<QuickSettingsProps> = ({}) => {
       embeddingsProvider: item.embeddings_provider as "openai" | "local",
       collectionId,
       similarityTopK,
+      docAgentPrompt,
       docAgentModel,
       docAgentTemperature,
       docAgentSimilarityTopK

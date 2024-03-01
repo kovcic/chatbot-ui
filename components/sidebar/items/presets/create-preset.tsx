@@ -6,11 +6,12 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { ChatbotUIContext } from "@/context/context"
 import { PRESET_NAME_MAX } from "@/db/limits"
 import { TablesInsert } from "@/supabase/types"
-import { FC, useContext, useState } from "react"
+import { FC, useContext, useEffect, useState } from "react"
 import { PresetCollectionSelect } from "./preset-collection-select"
 import { PresetCollection } from "@/types"
 import { Slider } from "@/components/ui/slider"
 import { AgentSettingsForm } from "@/components/ui/agent-settings-form"
+import { DOCUMENT_AGENT_PROMPT, TOP_AGENT_PROMPT } from "@/lib/rag/constants"
 
 interface CreatePresetProps {
   isOpen: boolean
@@ -37,6 +38,7 @@ export const CreatePreset: FC<CreatePresetProps> = ({
     embeddingsProvider: selectedWorkspace?.embeddings_provider,
     collectionId: undefined as string | undefined,
     similarityTopK: 2 as number | undefined,
+    docAgentPrompt: DOCUMENT_AGENT_PROMPT as string | undefined,
     docAgentModel: undefined as string | undefined,
     docAgentTemperature: 1 as number | undefined,
     docAgentSimilarityTopK: 2 as number | undefined
@@ -46,6 +48,13 @@ export const CreatePreset: FC<CreatePresetProps> = ({
   const collection = collections.find(
     collection => collection.id === presetChatSettings.collectionId
   )
+
+  useEffect(() => {
+    setPresetChatSettings(state => ({
+      ...state,
+      prompt: agent ? TOP_AGENT_PROMPT : selectedWorkspace?.default_prompt
+    }))
+  }, [agent, selectedWorkspace?.default_prompt])
 
   if (!profile) return null
   if (!selectedWorkspace) return null
@@ -71,6 +80,7 @@ export const CreatePreset: FC<CreatePresetProps> = ({
           embeddings_provider: presetChatSettings.embeddingsProvider,
           collection_id: presetChatSettings.collectionId,
           similarity_top_k: presetChatSettings.similarityTopK,
+          doc_agent_prompt: presetChatSettings.docAgentPrompt,
           doc_agent_model: presetChatSettings.docAgentModel,
           doc_agent_temperature: presetChatSettings.docAgentTemperature,
           doc_agent_similarity_top_k: presetChatSettings.docAgentSimilarityTopK

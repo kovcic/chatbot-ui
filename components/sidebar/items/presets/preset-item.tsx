@@ -29,6 +29,7 @@ export const PresetItem: FC<PresetItemProps> = ({ preset }) => {
     includeWorkspaceInstructions: preset.include_workspace_instructions,
     collectionId: preset.collection_id || undefined,
     similarityTopK: preset.similarity_top_k ?? (2 as number | undefined),
+    docAgentPrompt: preset.doc_agent_prompt || undefined,
     docAgentModel: preset.doc_agent_model || undefined,
     docAgentTemperature:
       preset.doc_agent_temperature ?? (1 as number | undefined),
@@ -67,6 +68,7 @@ export const PresetItem: FC<PresetItemProps> = ({ preset }) => {
         temperature: presetChatSettings.temperature,
         collection_id: presetChatSettings.collectionId,
         similarity_top_k: presetChatSettings.similarityTopK,
+        doc_agent_prompt: presetChatSettings.docAgentPrompt,
         doc_agent_model: presetChatSettings.docAgentModel,
         doc_agent_temperature: presetChatSettings.docAgentTemperature,
         doc_agent_similarity_top_k: presetChatSettings.docAgentSimilarityTopK

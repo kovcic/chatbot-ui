@@ -6,6 +6,8 @@ import { FC, useContext } from "react"
 import { ModelSelect } from "../models/model-select"
 import { Label } from "./label"
 import { Slider } from "./slider"
+import { TextareaAutosize } from "./textarea-autosize"
+import { DOCUMENT_AGENT_PROMPT, TOP_AGENT_PROMPT } from "@/lib/rag/constants"
 
 interface ChatSettingsFormProps {
   chatSettings: ChatSettings
@@ -39,6 +41,20 @@ export const AgentSettingsForm: FC<ChatSettingsFormProps> = ({
           onSelectModel={model => {
             onChangeChatSettings({ ...chatSettings, model })
           }}
+        />
+      </div>
+      <div className="space-y-1">
+        <Label>Prompt</Label>
+
+        <TextareaAutosize
+          className="bg-background border-input border-2"
+          placeholder={TOP_AGENT_PROMPT}
+          onValueChange={prompt => {
+            onChangeChatSettings({ ...chatSettings, prompt })
+          }}
+          value={chatSettings.prompt ?? TOP_AGENT_PROMPT}
+          minRows={3}
+          maxRows={6}
         />
       </div>
       <div className="space-y-3">
@@ -95,6 +111,20 @@ export const AgentSettingsForm: FC<ChatSettingsFormProps> = ({
           onSelectModel={model => {
             onChangeChatSettings({ ...chatSettings, docAgentModel: model })
           }}
+        />
+      </div>
+      <div className="space-y-1">
+        <Label>Prompt</Label>
+
+        <TextareaAutosize
+          className="bg-background border-input border-2"
+          placeholder={DOCUMENT_AGENT_PROMPT}
+          onValueChange={docAgentPrompt => {
+            onChangeChatSettings({ ...chatSettings, docAgentPrompt })
+          }}
+          value={chatSettings.docAgentPrompt ?? DOCUMENT_AGENT_PROMPT}
+          minRows={3}
+          maxRows={6}
         />
       </div>
       <div className="space-y-3">

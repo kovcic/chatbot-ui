@@ -31,11 +31,13 @@ export async function POST(request: Request) {
       collectionId,
       chatHistory,
       {
+        prompt: chatSettings.prompt,
         model: chatSettings.model,
         temperature: chatSettings.temperature,
         similarityTopK: chatSettings.similarityTopK
       },
       {
+        prompt: chatSettings.docAgentPrompt,
         model: chatSettings.docAgentModel,
         temperature: chatSettings.docAgentTemperature,
         similarityTopK: chatSettings.docAgentSimilarityTopK
