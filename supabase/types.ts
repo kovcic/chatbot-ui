@@ -1044,6 +1044,7 @@ export interface Database {
           created_at: string
           description: string
           doc_agent_model: string | null
+          doc_agent_prompt: string | null
           doc_agent_similarity_top_k: number | null
           doc_agent_temperature: number | null
           embeddings_provider: string
@@ -1066,6 +1067,7 @@ export interface Database {
           created_at?: string
           description: string
           doc_agent_model?: string | null
+          doc_agent_prompt?: string | null
           doc_agent_similarity_top_k?: number | null
           doc_agent_temperature?: number | null
           embeddings_provider: string
@@ -1088,6 +1090,7 @@ export interface Database {
           created_at?: string
           description?: string
           doc_agent_model?: string | null
+          doc_agent_prompt?: string | null
           doc_agent_similarity_top_k?: number | null
           doc_agent_temperature?: number | null
           embeddings_provider?: string

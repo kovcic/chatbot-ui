@@ -16,6 +16,7 @@ import ToolMapping from "./tool-mapping"
 import { convertToolToNode, createDocumentTool } from "./tools"
 import _ from "lodash"
 import { AgentOptions } from "@/types"
+import { DOCUMENT_AGENT_PROMPT, TOP_AGENT_PROMPT } from "./constants"
 
 export const createDocumentAgent = async (
   id: string,
@@ -62,7 +63,10 @@ export const createDocumentAgent = async (
     apiKey: process.env.OPENAI_API_KEY
   })
   // const llm = new OpenAI({ model: "gpt-3.5-turbo", temperature: 0.1, apiKey: process.env.OPENAI_API_KEY });
-  const systemPrompt = `You are a specialized agent designed to answer queries about: ${title}.\nYou must ALWAYS use at least one of the tools provided when answering a question; do NOT rely on prior knowledge.`
+  const systemPrompt = (options.prompt || DOCUMENT_AGENT_PROMPT).replace(
+    "{title}",
+    title
+  )
 
   const agent = new OpenAIAgent({
     tools,
@@ -98,8 +102,8 @@ export const createTopAgent = async (
     temperature: options.temperature ?? 0.1,
     apiKey: process.env.OPENAI_API_KEY
   })
-  const systemPrompt =
-    "You are an agent designed to answer queries about a set of given documents.\nPlease always use the tools provided to answer a question. Do not rely on prior knowledge."
+
+  const systemPrompt = options.prompt || TOP_AGENT_PROMPT
 
   const agent = new OpenAIAgent({
     llm,

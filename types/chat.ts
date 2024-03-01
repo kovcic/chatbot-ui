@@ -11,6 +11,7 @@ export interface ChatSettings {
   includeWorkspaceInstructions: boolean
   embeddingsProvider: "openai" | "local"
   collectionId: string | undefined
+  docAgentPrompt: string | undefined
   docAgentModel: LLMID | undefined
   docAgentTemperature: number | undefined
   docAgentSimilarityTopK: number | undefined

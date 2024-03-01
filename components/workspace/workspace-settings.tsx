@@ -140,6 +140,7 @@ export const WorkspaceSettings: FC<WorkspaceSettingsProps> = ({}) => {
           | "local",
         collectionId: undefined,
         similarityTopK: undefined,
+        docAgentPrompt: undefined,
         docAgentModel: undefined,
         docAgentTemperature: undefined,
         docAgentSimilarityTopK: undefined
